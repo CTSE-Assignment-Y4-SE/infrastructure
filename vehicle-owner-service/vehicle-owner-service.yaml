@@ -22,7 +22,7 @@ spec:
             - containerPort: 7073
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "dev"
+              value: "docker"
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://postgres-vehicle-owner-service:5432/vehicle-owner-service"
             - name: SPRING_DATASOURCE_USERNAME
