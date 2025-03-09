@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: vehicle-owner-service
-          image: ghcr.io/ctse-assignment-y4-se/vehicle-owner-service:20250308222615
+          image: ghcr.io/ctse-assignment-y4-se/vehicle-owner-service:20250309081700
           ports:
             - containerPort: 9093
           env:
