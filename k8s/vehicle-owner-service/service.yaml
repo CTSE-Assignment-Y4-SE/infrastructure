@@ -7,7 +7,12 @@ spec:
   selector:
     app: vehicle-owner-service
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
       targetPort: 9093
+    - name: grpc
+      protocol: TCP
+      port: 7073
+      targetPort: 7073
   type: ClusterIP
