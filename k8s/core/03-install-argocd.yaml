@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: argocd-installer-job
+  namespace: argocd
+spec:
+  template:
+    spec:
+      serviceAccountName: argocd-manager
+      containers:
+        - name: install-argocd
+          image: bitnami/kubectl
+          command:
+            - sh
+            - -c
+            - |
+              kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      restartPolicy: OnFailure
+  backoffLimit: 3

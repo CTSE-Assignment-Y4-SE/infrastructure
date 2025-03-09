@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
+  namespace: argocd
 spec:
   accessModes:
     - ReadWriteOnce
@@ -13,18 +14,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-vehicle-owner-service
+  name: postgres
+  namespace: argocd
   labels:
-    app: postgres-vehicle-owner-service
+    app: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-vehicle-owner-service
+      app: postgres
   template:
     metadata:
       labels:
-        app: postgres-vehicle-owner-service
+        app: postgres
     spec:
       containers:
         - name: postgres
@@ -33,7 +35,7 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: "vehicle-owner-service"
+              value: "garage"
             - name: POSTGRES_USER
               value: "postgres"
             - name: POSTGRES_PASSWORD
@@ -50,10 +52,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-vehicle-owner-service
+  name: postgres
+  namespace: argocd
 spec:
   selector:
-    app: postgres-vehicle-owner-service
+    app: postgres
   ports:
     - protocol: TCP
       port: 5432

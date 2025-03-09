@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehicle-owner-service
+  namespace: argocd
+  labels:
+    app: vehicle-owner-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehicle-owner-service
+  template:
+    metadata:
+      labels:
+        app: vehicle-owner-service
+    spec:
+      containers:
+        - name: vehicle-owner-service
+          image: ghcr.io/ctse-assignment-y4-se/vehicle-owner-service:20250308222615
+          ports:
+            - containerPort: 9093
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/garage"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "Root@123"

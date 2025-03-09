@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: argocd-image-updater-installer
+  namespace: argocd
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      serviceAccountName: argocd-manager
+      containers:
+        - name: install-image-updater
+          image: bitnami/kubectl
+          command:
+            - sh
+            - -c
+            - |
+              kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/master/manifests/install.yaml
+      restartPolicy: Never
