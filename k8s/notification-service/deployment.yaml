@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: ghcr.io/ctse-assignment-y4-se/notification-service:20250309090906
+          image: ghcr.io/ctse-assignment-y4-se/notification-service:20250417183632
           ports:
             - containerPort: 9091
           env:
