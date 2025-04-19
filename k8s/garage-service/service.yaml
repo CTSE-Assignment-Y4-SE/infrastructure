@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: garage-service
+  namespace: argocd
+spec:
+  selector:
+    app: garage-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 9093
+    - name: grpc
+      protocol: TCP
+      port: 7073
+      targetPort: 7073
+  type: ClusterIP

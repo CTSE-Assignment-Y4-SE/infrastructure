@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage-service
+  namespace: argocd
+  labels:
+    app: garage-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: garage-service
+  template:
+    metadata:
+      labels:
+        app: garage-service
+    spec:
+      containers:
+        - name: garage-service
+          image: ghcr.io/ctse-assignment-y4-se/garage-service:20250309090906
+          ports:
+            - containerPort: 9093
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/garage"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "Root@123"
