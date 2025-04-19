@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: garage-service
-          image: ghcr.io/ctse-assignment-y4-se/garage-service:20250309090906
+          image: ghcr.io/ctse-assignment-y4-se/garage-service:20250419174158
           ports:
             - containerPort: 9093
           env:
