@@ -29,3 +29,5 @@ spec:
               value: "Root@123"
             - name: SPRING_PROFILES_ACTIVE
               value: "docker"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka-service.argocd.svc.cluster.local:9092"
