@@ -24,7 +24,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:mysql://mysql-notification:3306/notification-service"
             - name: SPRING_DATASOURCE_USERNAME
-              value: "postgres"
+              value: "root"
             - name: SPRING_DATASOURCE_PASSWORD
               value: "Root@123"
             - name: SPRING_PROFILES_ACTIVE
