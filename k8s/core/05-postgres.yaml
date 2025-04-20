@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
+  name: postgres-garage-pvc
   namespace: argocd
 spec:
   accessModes:
@@ -9,24 +9,23 @@ spec:
   resources:
     requests:
       storage: 5Gi
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: postgres-garage
   namespace: argocd
   labels:
-    app: postgres
+    app: postgres-garage
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: postgres-garage
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres-garage
     spec:
       containers:
         - name: postgres
@@ -35,30 +34,219 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: "garage"
+              value: "garage-service"
             - name: POSTGRES_USER
               value: "postgres"
             - name: POSTGRES_PASSWORD
               value: "Root@123"
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: postgres-storage
+              name: postgres-garage-storage
       volumes:
-        - name: postgres-storage
+        - name: postgres-garage-storage
           persistentVolumeClaim:
-            claimName: postgres-pvc
-
+            claimName: postgres-garage-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: postgres-garage
   namespace: argocd
 spec:
   selector:
-    app: postgres
+    app: postgres-garage
   ports:
     - protocol: TCP
       port: 5432
       targetPort: 5432
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-user-pvc
+  namespace: argocd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-user
+  namespace: argocd
+  labels:
+    app: postgres-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-user
+  template:
+    metadata:
+      labels:
+        app: postgres-user
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "user-service"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "Root@123"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-user-storage
+      volumes:
+        - name: postgres-user-storage
+          persistentVolumeClaim:
+            claimName: postgres-user-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-user
+  namespace: argocd
+spec:
+  selector:
+    app: postgres-user
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-vehicle-owner-pvc
+  namespace: argocd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-vehicle-owner
+  namespace: argocd
+  labels:
+    app: postgres-vehicle-owner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-vehicle-owner
+  template:
+    metadata:
+      labels:
+        app: postgres-vehicle-owner
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "vehicle-owner-service"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "Root@123"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-vehicle-owner-storage
+      volumes:
+        - name: postgres-vehicle-owner-storage
+          persistentVolumeClaim:
+            claimName: postgres-vehicle-owner-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-vehicle-owner
+  namespace: argocd
+spec:
+  selector:
+    app: postgres-vehicle-owner
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-notification-pvc
+  namespace: argocd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-notification
+  namespace: argocd
+  labels:
+    app: mysql-notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-notification
+  template:
+    metadata:
+      labels:
+        app: mysql-notification
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "Root@123"
+            - name: MYSQL_DATABASE
+              value: "notification-service"
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-notification-storage
+      volumes:
+        - name: mysql-notification-storage
+          persistentVolumeClaim:
+            claimName: mysql-notification-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-notification
+  namespace: argocd
+spec:
+  selector:
+    app: mysql-notification
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
   type: ClusterIP
