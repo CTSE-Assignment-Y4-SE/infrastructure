@@ -19,7 +19,7 @@ spec:
         - name: garage-service
           image: ghcr.io/ctse-assignment-y4-se/garage-service:20250419174158
           ports:
-            - containerPort: 9093
+            - containerPort: 9090
           env:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://postgres:5432/garage"
