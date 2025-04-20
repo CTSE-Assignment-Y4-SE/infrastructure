@@ -1,0 +1,109 @@
+## Zookeeper Deployment & Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+  namespace: argocd
+  labels:
+    app: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: confluentinc/cp-zookeeper:7.9.0-1-ubi8
+          imagePullPolicy: Always
+          env:
+            - name: ZOOKEEPER_CLIENT_PORT
+              value: "2181"
+            - name: ZOOKEEPER_TICK_TIME
+              value: "2000"
+          ports:
+            - containerPort: 2181
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-service
+  namespace: argocd
+spec:
+  selector:
+    app: zookeeper
+  ports:
+    - name: client
+      protocol: TCP
+      port: 2181
+      targetPort: 2181
+  type: ClusterIP
+
+---
+
+## Kafka Deployment & Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: argocd
+  labels:
+    app: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: confluentinc/cp-kafka:7.9.0-1-ubi8
+          imagePullPolicy: Always
+          env:
+            - name: KAFKA_PORT
+              value: ""
+            - name: ZOOKEEPER_SERVICE_HOST
+              value: ""
+            - name: ZOOKEEPER_SERVICE_PORT
+              value: ""
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              value: "zookeeper-service.argocd.svc.cluster.local:2181"
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://kafka-service.argocd.svc.cluster.local:9092"
+            - name: KAFKA_CFG_BROKER_ID
+              value: "1"
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: "zookeeper-service.argocd.svc.cluster.local:2181"
+            - name: KAFKA_CFG_LISTENERS
+              value: "PLAINTEXT://0.0.0.0:9092"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://kafka-service.argocd.svc.cluster.local:9092"
+            - name: KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+          ports:
+            - containerPort: 9092
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-service
+  namespace: argocd
+spec:
+  selector:
+    app: kafka
+  ports:
+    - name: broker
+      protocol: TCP
+      port: 9092
+      targetPort: 9092
+  type: ClusterIP
