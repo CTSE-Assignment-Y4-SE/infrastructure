@@ -1,14 +1,46 @@
+# ========== CONFIGMAPS (init.sql scripts) ==========
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-garage-initdb
+  namespace: argocd
+data:
+  init.sql: |
+    CREATE DATABASE "garage-service";
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-user-initdb
+  namespace: argocd
+data:
+  init.sql: |
+    CREATE DATABASE "user-service";
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-vehicle-owner-initdb
+  namespace: argocd
+data:
+  init.sql: |
+    CREATE DATABASE "vehicle-owner-service";
+
+# ========== GARAGE SERVICE POSTGRES ==========
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-garage-pvc
   namespace: argocd
 spec:
-  accessModes:
-    - ReadWriteOnce
+  accessModes: [ReadWriteOnce]
   resources:
     requests:
       storage: 5Gi
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -30,22 +62,26 @@ spec:
       containers:
         - name: postgres
           image: postgres:15
-          ports:
-            - containerPort: 5432
           env:
-            - name: POSTGRES_DB
-              value: "garage-service"
             - name: POSTGRES_USER
               value: "postgres"
             - name: POSTGRES_PASSWORD
               value: "Root@123"
+          ports:
+            - containerPort: 5432
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-garage-storage
+            - mountPath: /docker-entrypoint-initdb.d
+              name: init-script
       volumes:
         - name: postgres-garage-storage
           persistentVolumeClaim:
             claimName: postgres-garage-pvc
+        - name: init-script
+          configMap:
+            name: postgres-garage-initdb
+
 ---
 apiVersion: v1
 kind: Service
@@ -61,6 +97,7 @@ spec:
       targetPort: 5432
   type: ClusterIP
 
+# ========== USER SERVICE POSTGRES ==========
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -68,11 +105,11 @@ metadata:
   name: postgres-user-pvc
   namespace: argocd
 spec:
-  accessModes:
-    - ReadWriteOnce
+  accessModes: [ReadWriteOnce]
   resources:
     requests:
       storage: 5Gi
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -94,22 +131,26 @@ spec:
       containers:
         - name: postgres
           image: postgres:15
-          ports:
-            - containerPort: 5432
           env:
-            - name: POSTGRES_DB
-              value: "user-service"
             - name: POSTGRES_USER
               value: "postgres"
             - name: POSTGRES_PASSWORD
               value: "Root@123"
+          ports:
+            - containerPort: 5432
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-user-storage
+            - mountPath: /docker-entrypoint-initdb.d
+              name: init-script
       volumes:
         - name: postgres-user-storage
           persistentVolumeClaim:
             claimName: postgres-user-pvc
+        - name: init-script
+          configMap:
+            name: postgres-user-initdb
+
 ---
 apiVersion: v1
 kind: Service
@@ -125,6 +166,7 @@ spec:
       targetPort: 5432
   type: ClusterIP
 
+# ========== VEHICLE OWNER POSTGRES ==========
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -132,11 +174,11 @@ metadata:
   name: postgres-vehicle-owner-pvc
   namespace: argocd
 spec:
-  accessModes:
-    - ReadWriteOnce
+  accessModes: [ReadWriteOnce]
   resources:
     requests:
       storage: 5Gi
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -158,22 +200,26 @@ spec:
       containers:
         - name: postgres
           image: postgres:15
-          ports:
-            - containerPort: 5432
           env:
-            - name: POSTGRES_DB
-              value: "vehicle-owner-service"
             - name: POSTGRES_USER
               value: "postgres"
             - name: POSTGRES_PASSWORD
               value: "Root@123"
+          ports:
+            - containerPort: 5432
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-vehicle-owner-storage
+            - mountPath: /docker-entrypoint-initdb.d
+              name: init-script
       volumes:
         - name: postgres-vehicle-owner-storage
           persistentVolumeClaim:
             claimName: postgres-vehicle-owner-pvc
+        - name: init-script
+          configMap:
+            name: postgres-vehicle-owner-initdb
+
 ---
 apiVersion: v1
 kind: Service
@@ -189,6 +235,7 @@ spec:
       targetPort: 5432
   type: ClusterIP
 
+# ========== MYSQL NOTIFICATION SERVICE ==========
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -196,11 +243,11 @@ metadata:
   name: mysql-notification-pvc
   namespace: argocd
 spec:
-  accessModes:
-    - ReadWriteOnce
+  accessModes: [ReadWriteOnce]
   resources:
     requests:
       storage: 5Gi
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -222,13 +269,13 @@ spec:
       containers:
         - name: mysql
           image: mysql:8
-          ports:
-            - containerPort: 3306
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "Root@123"
             - name: MYSQL_DATABASE
               value: "notification-service"
+          ports:
+            - containerPort: 3306
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: mysql-notification-storage
@@ -236,6 +283,7 @@ spec:
         - name: mysql-notification-storage
           persistentVolumeClaim:
             claimName: mysql-notification-pvc
+
 ---
 apiVersion: v1
 kind: Service
