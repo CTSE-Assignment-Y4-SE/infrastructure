@@ -22,7 +22,7 @@ spec:
             - containerPort: 9091
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres:5432/garage"
+              value: "jdbc:mysql://mysql-notification:3306/notification-service"
             - name: SPRING_DATASOURCE_USERNAME
               value: "postgres"
             - name: SPRING_DATASOURCE_PASSWORD

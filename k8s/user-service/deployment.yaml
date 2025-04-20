@@ -22,7 +22,7 @@ spec:
             - containerPort: 9092
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres:5432/garage"
+              value: "jdbc:postgresql://postgres-garage:5432/user-service"
             - name: SPRING_DATASOURCE_USERNAME
               value: "postgres"
             - name: SPRING_DATASOURCE_PASSWORD
