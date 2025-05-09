@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: ghcr.io/ctse-assignment-y4-se/user-service:20250509055644
+          image: ghcr.io/ctse-assignment-y4-se/user-service:20250509154249
           ports:
             - containerPort: 9092
           env:
