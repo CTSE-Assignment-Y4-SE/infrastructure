@@ -67,12 +67,12 @@ kubectl rollout status deployment/gateway -n $NAMESPACE
 echo
 echo "8️⃣  Port‐forwarding services for local access…"
 echo "    • Gateway → http://localhost:8080/"
-kubectl port-forward svc/gateway -n $NAMESPACE 8080:80 \
+kubectl port-forward --address 0.0.0.0 svc/gateway -n $NAMESPACE 8080:80 \
   > /dev/null 2>&1 &
 PF_GATEWAY=$!
 
 echo "    • Argo CD → http://localhost:8081/"
-kubectl port-forward svc/argocd-server -n $NAMESPACE 8081:80 \
+kubectl port-forward --address 0.0.0.0 svc/argocd-server -n $NAMESPACE 8081:80 \
   > /dev/null 2>&1 &
 PF_ARGOCD=$!
 
