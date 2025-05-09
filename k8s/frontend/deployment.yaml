@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/ctse-assignment-y4-se/frontend:20250420155814
+          image: ghcr.io/ctse-assignment-y4-se/frontend:20250509051054
           ports:
             - containerPort: 5000
